@@ -1,0 +1,55 @@
+.job-board {
+  display: flex;
+  flex-direction: column;
+  padding: 20px; /* Add padding to the entire page */
+}
+
+.job-container {
+  display: flex; /* Use flexbox to layout job ads and details */
+}
+
+.job-list {
+  flex: 0 0 30%; /* Take 30% width for job ads */
+  padding: 20px;
+  border-right: 1px solid #e0e0e0; /* Add a separator */
+}
+
+.job-details-container {
+  flex: 1; /* Take the remaining width for job details */
+}
+
+.job-ad {
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  margin: 10px 0;
+  background-color: #f9f9f9;
+}
+
+.job-ad h2 {
+  color: #2d2d2d;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.job-ad p {
+  color: #555;
+}
+
+button {
+  padding: 10px 20px;
+  margin-right: 5px;
+  background-color: #0b66c3;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0954a0;
+}
+
+.job-details {
+  padding: 20px; /* Add padding to job details */
+  border-left: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
+}
