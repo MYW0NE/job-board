@@ -1,5 +1,5 @@
 import React from 'react';
-import './JobDetails.css'; // Import CSS for styling
+import './JobDetails.css'; 
 
 const JobDetails = ({ job }) => {
     if (!job) {

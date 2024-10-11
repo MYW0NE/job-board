@@ -1,21 +1,21 @@
 .job-board {
   display: flex;
   flex-direction: column;
-  padding: 20px; /* Add padding to the entire page */
+  padding: 20px; 
 }
 
 .job-container {
-  display: flex; /* Use flexbox to layout job ads and details */
+  display: flex; 
 }
 
 .job-list {
-  flex: 0 0 30%; /* Take 30% width for job ads */
+  flex: 0 0 30%; 
   padding: 20px;
-  border-right: 1px solid #e0e0e0; /* Add a separator */
+  border-right: 1px solid #e0e0e0; 
 }
 
 .job-details-container {
-  flex: 1; /* Take the remaining width for job details */
+  flex: 1; 
 }
 
 .job-ad {

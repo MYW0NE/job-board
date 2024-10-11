@@ -1,58 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import JobAd from './components/JobAd';
 import Header from './components/Header';
-import JobDetails from './components/JobDetails'; // Import JobDetails
+import JobDetails from './components/JobDetails';
+import PostJobForm from './components/PostJobForm';
 import './App.css';
 
 const App = () => {
-    const [selectedJob, setSelectedJob] = useState(null); // State to hold selected job
+    const [jobAds, setJobAds] = useState([]); 
+    const [selectedJob, setSelectedJob] = useState(null); 
+    const [showPostForm, setShowPostForm] = useState(false);
 
-    // Sample job ads data (mock data)
-    const jobAds = [
-        {
-            id: 1,
-            title: "Software Engineer",
-            shortDescription: "Develop and maintain web applications."
-        },
-        {
-            id: 2,
-            title: "Product Manager",
-            shortDescription: "Oversee product development and strategy."
-        },
-        {
-            id: 3,
-            title: "UX Designer",
-            shortDescription: "Design user-friendly interfaces."
-        }
-    ];
+
+    useEffect(() => {
+        fetch('http://localhost:5000/api/job-ads')
+            .then(response => response.json())
+            .then(data => setJobAds(data))
+            .catch(error => console.error('Error fetching job ads:', error));
+    }, []);
+
+  
+    const handleAddJobAd = (newJobAd) => {
+        setJobAds([...jobAds, newJobAd]); 
+        setShowPostForm(false); 
+    };
 
     const handleLearnMore = (ad) => {
-        setSelectedJob(ad); // Set selected job
+        setSelectedJob(ad); 
     };
 
     const handleApply = (ad) => {
-        // Placeholder for apply functionality
         console.log(`Apply for ${ad.title}`);
+    };
+
+    const togglePostForm = () => {
+        setShowPostForm(!showPostForm);
+        setSelectedJob(null); 
     };
 
     return (
         <div className="job-board">
             <Header />
-            <div className="job-container">
-                <div className="job-list">
-                    {jobAds.map(ad => (
-                        <JobAd 
-                            key={ad.id} 
-                            {...ad} 
-                            onLearnMore={() => handleLearnMore(ad)} 
-                            onApply={() => handleApply(ad)} 
-                        />
-                    ))}
-                </div>
-                <div className="job-details-container">
-                    <JobDetails job={selectedJob} /> {/* Pass selected job */}
-                </div>
+
+            <div style={{ marginBottom: "20px" }}>
+                <button onClick={togglePostForm}>
+                    {showPostForm ? "Back to Job List" : "Post a New Job"}
+                </button>
             </div>
+
+            {showPostForm ? (
+                <PostJobForm onAddJobAd={handleAddJobAd} />  
+            ) : (
+                <div className="job-container">
+                    <div className="job-list">
+                        {jobAds.map(ad => (
+                            <JobAd 
+                                key={ad.id} 
+                                {...ad} 
+                                onLearnMore={() => handleLearnMore(ad)} 
+                                onApply={() => handleApply(ad)} 
+                            />
+                        ))}
+                    </div>
+                    <div className="job-details-container">
+                        {selectedJob && <JobDetails job={selectedJob} />} {/* Pass selected job */}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
