@@ -13,7 +13,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // Change this to true to show job ads initially
   const [isRegistering, setIsRegistering] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
@@ -107,9 +107,6 @@ function App() {
     <div className="App">
       <Header />
 
-      {/* Debug: Force rendering a message */}
-      <p>{isLoggedIn ? 'Logged In' : 'Not Logged In'}</p>
-
       {/* Conditional rendering logic */}
       {isLoggedIn ? (
         <>
@@ -139,7 +136,7 @@ function App() {
           )}
         </>
       ) : isRegistering ? (
-        <Register onRegister={handleRegister} />
+        <Register onRegister={handleRegister} onShowLogin={showLogin} />
       ) : isForgotPassword ? (
         <ForgotPassword onReset={resetToLogin} />
       ) : (
