@@ -1,18 +1,33 @@
-import React, { useState } from 'react';
-import { FaEnvelope, FaBell, FaUser, FaStar, FaBriefcase, FaIdCard, FaCog, FaQuestionCircle, FaLock } from 'react-icons/fa'; // Icons for messaging, notifications, and profile
+import React, { useState, useEffect, useRef } from 'react';
+import { FaEnvelope, FaBell, FaUser, FaStar, FaBriefcase, FaIdCard, FaCog, FaQuestionCircle, FaLock } from 'react-icons/fa'; 
 import './Header.css';
 
 const Header = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false); // State to handle profile dropdown
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef(null); // Reference to profile container
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
   };
 
   const toggleProfile = () => {
-    setIsProfileOpen(!isProfileOpen); // Toggle the profile dropdown visibility
+    setIsProfileOpen(!isProfileOpen);
   };
+
+  // Close the profile dropdown if clicked outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <header className="header">
@@ -30,13 +45,13 @@ const Header = () => {
         <FaBell className="icon" />
         
         {/* Profile icon with dropdown */}
-        <div className="profile-container">
+        <div className="profile-container" ref={profileRef}>
           <FaUser className="icon profile-icon" onClick={toggleProfile} />
           {isProfileOpen && (
             <div className="profile-dropdown">
               <p className="user-email">tomgrosso@outlook.fr</p>
               <ul>
-                <li><a href="#"><FaIdCard />Profil</a></li>
+                <li><a href="#"><FaIdCard /> Profil</a></li>
                 <li><a href="#"><FaBriefcase /> Mes offres d'emploi</a></li>
                 <li><a href="#"><FaStar /> Mes avis</a></li>
                 <li><a href="#"><FaLock /> Ma démographie</a></li>
@@ -51,7 +66,6 @@ const Header = () => {
 
         <button className="cta-button">Entreprise / Publier une offre d'emploi</button>
 
-        {/* Hamburger menu on the right */}
         <div className="hamburger" onClick={toggleNav}>
           ☰
         </div>
