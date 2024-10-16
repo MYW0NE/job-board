@@ -6,6 +6,9 @@ const Register = ({ onRegister, onShowLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
@@ -17,9 +20,16 @@ const Register = ({ onRegister, onShowLogin }) => {
     }
 
     // Handle registration logic here
-    console.log('Registered with Email:', email);
-    // Mockup for demo purposes; replace with actual registration logic
-    onRegister(); // Call this function on successful registration
+    console.log('Registered with:', {
+      email,
+      name,
+      lastName,
+      phoneNumber,
+      password,
+    });
+    
+    // Call this function on successful registration
+    onRegister(); 
   };
 
   return (
@@ -28,6 +38,40 @@ const Register = ({ onRegister, onShowLogin }) => {
         <h2>S'inscrire</h2>
         {error && <p className="error-message">{error}</p>}
         <form onSubmit={handleSubmit}>
+          {/* Name Input */}
+          <div className="input-group">
+            <input
+              type="text"
+              placeholder="Prénom"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Last Name Input */}
+          <div className="input-group">
+            <input
+              type="text"
+              placeholder="Nom de famille"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Phone Number Input with Icon */}
+          <div className="input-group">
+            <input
+              type="tel"
+              placeholder="Numéro de téléphone"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Email Input */}
           <div className="input-group">
             <input
               type="email"
@@ -37,33 +81,8 @@ const Register = ({ onRegister, onShowLogin }) => {
               required
             />
           </div>
-          {/* <div className="input-group">
-            <input
-              type="name"
-              placeholder="name"
-              value={name}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <input
-              type="last_name"
-              placeholder="last_name"
-              value={lastname}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <input
-              type="phone_number"
-              placeholder="phone_number"
-              value={FaPhone}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div> */}
+
+          {/* Password Input */}
           <div className="input-group">
             <input
               type="password"
@@ -73,6 +92,8 @@ const Register = ({ onRegister, onShowLogin }) => {
               required
             />
           </div>
+
+          {/* Confirm Password Input */}
           <div className="input-group">
             <input
               type="password"
@@ -82,9 +103,11 @@ const Register = ({ onRegister, onShowLogin }) => {
               required
             />
           </div>
+
+          {/* Submit Button */}
           <button type="submit" className="button_profil">S'inscrire</button>
 
-          {/* Link to switch to login page */}
+          {/* Link to Login Page */}
           <p className="login-link" onClick={onShowLogin}>
             Déjà un compte ? Se connecter
           </p>

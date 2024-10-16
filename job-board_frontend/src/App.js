@@ -19,6 +19,10 @@ function App() {
 
   // Simulated job data (for testing)
   useEffect(() => {
+    console.log("tata")
+  }, [isLoggedIn]);
+
+  useEffect(() => {
     const mockJobs = [
       {
         id: 1,
@@ -105,7 +109,7 @@ function App() {
 
   return (
     <div className="App">
-      <Header />
+      <Header setIsLoggedIn={setIsLoggedIn}/>
 
       {/* Conditional rendering logic for login, registration, forgot password, and job listings */}
       {isLoggedIn ? (
