@@ -1,16 +1,15 @@
-// src/components/ForgotPassword.js
 import React, { useState } from 'react';
-import './ForgotPassword.css'; // Import any CSS for styling
+import './ForgotPassword.css'; // Import the CSS
 
-const ForgotPassword = ({ onReset }) => {
+const ForgotPassword = ({ onReset, onLogin, onRegister }) => {
   const [email, setEmail] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle password reset logic here
+    // Handle password reset logic
     console.log('Reset link sent to:', email);
     alert(`A password reset link has been sent to ${email}`);
-    onReset(); // Call this function to return to the login/register page
+    onReset(); // Call the reset function to go back to login or register page
   };
 
   return (
@@ -29,6 +28,16 @@ const ForgotPassword = ({ onReset }) => {
           </div>
           <button type="submit" className="button_profil">Envoyer le lien de réinitialisation</button>
         </form>
+
+        {/* Navigation Links */}
+        <div className="login-register-links">
+          <p className="back-to-login" onClick={onLogin}>
+            Se connecter
+          </p>
+          <p className="register-link" onClick={onRegister}>
+            Pas de compte ? S'enregistrer
+          </p>
+        </div>
       </div>
     </div>
   );

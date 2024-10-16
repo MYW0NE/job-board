@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
-import Research from './components/research';
+import Research from './components/research';  // Corrected the import to match file name casing
 import JobAdList from './components/JobAdList';
 import JobDetails from './components/JobDetails'; // Importe JobDetails ici
 import Login from './components/Login';
@@ -14,6 +14,7 @@ function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedJobId, setSelectedJobId] = useState(null); // On change pour stocker l'ID du job
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(true); 
   const [isRegistering, setIsRegistering] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
@@ -84,11 +85,19 @@ function App() {
     <div className="App">
       <Header />
 
+      {/* Conditional rendering logic for login, registration, forgot password, and job listings */}
       {isLoggedIn ? (
         <>
           <Research onSearch={handleSearch} />
           <div className="jobListings">
-            <h2>Job Listings</h2>
+            <h2>Offres d'emplois</h2>
+            {loading ? (
+              <p>Loading jobs...</p>
+            ) : searchResults.length === 0 ? (
+              <p>No jobs found</p>
+            ) : (
+              <JobAdList jobs={searchResults} onLearnMore={handleLearnMore} />
+            )}
           </div>
 
           {loading ? (
@@ -105,9 +114,17 @@ function App() {
       ) : isRegistering ? (
         <Register onRegister={handleRegister} onShowLogin={showLogin} />
       ) : isForgotPassword ? (
-        <ForgotPassword onReset={resetToLogin} />
+        <ForgotPassword 
+          onReset={resetToLogin} 
+          onLogin={showLogin} 
+          onRegister={showRegister} 
+        />
       ) : (
-        <Login onLogin={handleLogin} onShowRegister={showRegister} onForgotPassword={showForgotPassword} />
+        <Login 
+          onLogin={handleLogin} 
+          onShowRegister={showRegister} 
+          onForgotPassword={showForgotPassword} 
+        />
       )}
     </div>
   );
