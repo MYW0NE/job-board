@@ -3,7 +3,7 @@ import { FaEnvelope, FaBell, FaUser, FaStar, FaBriefcase, FaIdCard, FaCog, FaQue
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom for navigation
 import './Header.css';
 
-const Header = () => {
+const Header = ({setIsLoggedIn}) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef(null); // Reference to profile container
@@ -30,6 +30,11 @@ const Header = () => {
     };
   }, []);
 
+  const handleProfile = (e) => {
+    e.preventDefault();
+    setIsLoggedIn(false);
+    console.log("toto")
+  }
   return (
     <header className="header">
       <div className="header-left">
@@ -56,7 +61,7 @@ const Header = () => {
             <div className="profile-dropdown">
               {/* <p className="user-email">tomgrosso@outlook.fr</p> */}
               <ul>
-                <li><a href="#"><FaIdCard /> Profil</a></li>
+                <li><a onClick={handleProfile}><FaIdCard /> Profil</a></li>
                 {/* <Link to={isLoggedIn ? '/Profile' : '/Login'}>
                     <FaIdCard /> Profil
                   </Link> */}

@@ -21,7 +21,8 @@ function App() {
 
   // Fetch job ads from the API
   useEffect(() => {
-    axios.get('http://localhost:5000/api/job-ads') 
+    // TODO: React appelle 2 fois useEffect() au load de la page
+    axios.get('http://127.0.0.1:5000/api/job-ads') 
       .then(response => {
         setJobs(response.data); 
         setSearchResults(response.data); 
@@ -83,7 +84,7 @@ function App() {
 
   return (
     <div className="App">
-      <Header />
+      <Header setIsLoggedIn={setIsLoggedIn}/>
 
       {/* Conditional rendering logic for login, registration, forgot password, and job listings */}
       {isLoggedIn ? (
