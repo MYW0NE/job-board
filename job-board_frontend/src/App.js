@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
-import Research from './components/research';
+import Research from './components/research';  // Corrected the import to match file name casing
 import JobAdList from './components/JobAdList';
 import Login from './components/Login';
 import Register from './components/Register';
 import ForgotPassword from './components/ForgotPassword'; // Import the ForgotPassword component
-import './App.css';   
+import './App.css';
 
 function App() {
   const [jobs, setJobs] = useState([]);
@@ -13,7 +13,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Change this to true to show job ads initially
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Initially set to false
   const [isRegistering, setIsRegistering] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
@@ -47,7 +47,7 @@ function App() {
       setJobs(mockJobs); // Set the mock data into jobs
       setSearchResults(mockJobs); // Initialize search results with all jobs
       setLoading(false); // Simulate job loading complete
-    }, 2000); 
+    }, 2000);
   }, []);
 
   const handleSearch = (searchQuery, locationQuery) => {
@@ -107,21 +107,20 @@ function App() {
     <div className="App">
       <Header />
 
-      {/* Conditional rendering logic */}
+      {/* Conditional rendering logic for login, registration, forgot password, and job listings */}
       {isLoggedIn ? (
         <>
           <Research onSearch={handleSearch} />
           <div className="jobListings">
-            <h2>Job Listings</h2>
+            <h2>Offres d'emplois</h2>
+            {loading ? (
+              <p>Loading jobs...</p>
+            ) : searchResults.length === 0 ? (
+              <p>No jobs found</p>
+            ) : (
+              <JobAdList jobs={searchResults} onLearnMore={handleLearnMore} />
+            )}
           </div>
-
-          {loading ? (
-            <p>Loading jobs...</p>
-          ) : searchResults.length === 0 ? (
-            <p>No jobs found</p>
-          ) : (
-            <JobAdList jobs={searchResults} onLearnMore={handleLearnMore} />
-          )}
 
           {isModalOpen && selectedJob && (
             <div className="modal">
@@ -138,9 +137,17 @@ function App() {
       ) : isRegistering ? (
         <Register onRegister={handleRegister} onShowLogin={showLogin} />
       ) : isForgotPassword ? (
-        <ForgotPassword onReset={resetToLogin} />
+        <ForgotPassword 
+          onReset={resetToLogin} 
+          onLogin={showLogin} 
+          onRegister={showRegister} 
+        />
       ) : (
-        <Login onLogin={handleLogin} onShowRegister={showRegister} onForgotPassword={showForgotPassword} />
+        <Login 
+          onLogin={handleLogin} 
+          onShowRegister={showRegister} 
+          onForgotPassword={showForgotPassword} 
+        />
       )}
     </div>
   );

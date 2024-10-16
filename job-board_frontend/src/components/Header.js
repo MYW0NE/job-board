@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaEnvelope, FaBell, FaUser, FaStar, FaBriefcase, FaIdCard, FaCog, FaQuestionCircle, FaLock } from 'react-icons/fa'; 
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom for navigation
 import './Header.css';
 
 const Header = () => {
@@ -32,11 +33,15 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-left">
-        <div className="logo"><a href="#">JobSphere</a></div>
+        <div className="logo">
+          {/* Link the logo to the JobAdList (Home) page */}
+          <Link to="/">JobSphere</Link>
+        </div>
         <nav className={`nav ${isNavOpen ? 'open' : ''}`}>
-          <a href="#">Home</a>
-          <a href="#">Opinions on Companies</a>
-          <a href="#">Salary Estimation</a>
+          {/* Link the Home option to the JobAdList (Home) page */}
+          <Link to="/">Home</Link>
+          {/* <a href="#">Opinions on Companies</a>
+          <a href="#">Salary Estimation</a> */}
         </nav>
       </div>
 
@@ -49,15 +54,18 @@ const Header = () => {
           <FaUser className="icon profile-icon" onClick={toggleProfile} />
           {isProfileOpen && (
             <div className="profile-dropdown">
-              <p className="user-email">tomgrosso@outlook.fr</p>
+              {/* <p className="user-email">tomgrosso@outlook.fr</p> */}
               <ul>
                 <li><a href="#"><FaIdCard /> Profil</a></li>
-                <li><a href="#"><FaBriefcase /> Mes offres d'emploi</a></li>
+                {/* <Link to={isLoggedIn ? '/Profile' : '/Login'}>
+                    <FaIdCard /> Profil
+                  </Link> */}
+                {/* <li><a href="#"><FaBriefcase /> Mes offres d'emploi</a></li>
                 <li><a href="#"><FaStar /> Mes avis</a></li>
                 <li><a href="#"><FaLock /> Ma démographie</a></li>
                 <li><a href="#"><FaCog /> Paramètres</a></li>
                 <li><a href="#"><FaQuestionCircle /> Centre d'aide</a></li>
-                <li><a href="#"><FaLock /> Centre de confidentialité</a></li>
+                <li><a href="#"><FaLock /> Centre de confidentialité</a></li> */}
               </ul>
               <button className="logout-button">Déconnexion</button>
             </div>
