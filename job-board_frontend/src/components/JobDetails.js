@@ -1,21 +1,36 @@
-import React from 'react';
-import './JobDetails.css'; // Import CSS for styling
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const JobDetails = ({ job }) => {
-    if (!job) {
-        return <div className="job-details">Select a job to see details.</div>;
+const JobDetails = ({ jobId, onBack }) => {
+  const [jobDetails, setJobDetails] = useState(null);
+
+  useEffect(() => {
+    if (jobId) {
+      axios.get(`http://localhost:5000/api/job-ads/${jobId}`)
+        .then(response => {
+          setJobDetails(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching job details:', error);
+        });
     }
+  }, [jobId]);
 
-    return (
-        <div className="job-details">
-            <h2>{job.title}</h2>
-            <p><strong>Full Description:</strong> {job.description}</p>
-            <p><strong>Wages:</strong> {job.wages}</p>
-            <p><strong>Location:</strong> {job.location}</p>
-            <p><strong>Working Time:</strong> {job.workingTime}</p>
-            {/* Add more dynamic fields as needed */}
-        </div>
-    );
+  if (!jobDetails) {
+    return <p>Loading job details...</p>;
+  }
+
+  return (
+    <div>
+      <h2>{jobDetails.title}</h2>
+      <p><strong>Location:</strong> {jobDetails.location || 'N/A'}</p>
+      <p><strong>Salary:</strong> {jobDetails.salary || 'N/A'}</p>
+      <p><strong>Company Name:</strong> {jobDetails.company_name || 'N/A'}</p>
+      <p><strong>Industry:</strong> {jobDetails.industry || 'N/A'}</p>
+      <p><strong>Company Description:</strong> {jobDetails.bigdescription || 'N/A'}</p>
+      <button onClick={onBack}>Back to Listings</button>
+    </div>
+  );
 };
 
 export default JobDetails;

@@ -2,52 +2,34 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Research from './components/research';
 import JobAdList from './components/JobAdList';
+import JobDetails from './components/JobDetails'; // Importe JobDetails ici
 import Login from './components/Login';
 import Register from './components/Register';
-import ForgotPassword from './components/ForgotPassword'; // Import the ForgotPassword component
+import ForgotPassword from './components/ForgotPassword'; 
+import axios from 'axios'; 
 import './App.css';   
 
 function App() {
   const [jobs, setJobs] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedJob, setSelectedJob] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Change this to true to show job ads initially
+  const [selectedJobId, setSelectedJobId] = useState(null); // On change pour stocker l'ID du job
+  const [isLoggedIn, setIsLoggedIn] = useState(true); 
   const [isRegistering, setIsRegistering] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
-  // Simulated job data (for testing)
+  // Fetch job ads from the API
   useEffect(() => {
-    const mockJobs = [
-      {
-        id: 1,
-        title: 'Frontend Developer',
-        shortDescription: 'We are looking for a talented frontend developer with React experience.',
-        location: 'Remote',
-        salary: '$60,000 - $80,000',
-      },
-      {
-        id: 2,
-        title: 'Backend Developer',
-        shortDescription: 'Join our team as a backend developer with Node.js and MongoDB experience.',
-        location: 'New York',
-        salary: '$70,000 - $90,000',
-      },
-      {
-        id: 3,
-        title: 'Full Stack Developer',
-        shortDescription: 'We need a full stack developer proficient in both frontend and backend technologies.',
-        location: 'San Francisco',
-        salary: '$90,000 - $120,000',
-      }
-    ];
-
-    setTimeout(() => {
-      setJobs(mockJobs); // Set the mock data into jobs
-      setSearchResults(mockJobs); // Initialize search results with all jobs
-      setLoading(false); // Simulate job loading complete
-    }, 2000); 
+    axios.get('http://localhost:5000/api/job-ads') 
+      .then(response => {
+        setJobs(response.data); 
+        setSearchResults(response.data); 
+        setLoading(false); 
+      })
+      .catch(error => {
+        console.error('Error fetching job ads:', error);
+        setLoading(false); 
+      });
   }, []);
 
   const handleSearch = (searchQuery, locationQuery) => {
@@ -59,13 +41,11 @@ function App() {
   };
 
   const handleLearnMore = (jobId) => {
-    const job = jobs.find((j) => j.id === jobId);
-    setSelectedJob(job);
-    setIsModalOpen(true);
+    setSelectedJobId(jobId); // Stocke l'ID du job sélectionné
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const handleBack = () => {
+    setSelectedJobId(null); // Reset l'ID pour revenir à la liste des annonces
   };
 
   const handleLogin = () => {
@@ -100,14 +80,10 @@ function App() {
     setIsRegistering(false);
   };
 
-  // Debug: Log important state variables
-  console.log({ isLoggedIn, isRegistering, isForgotPassword });
-
   return (
     <div className="App">
       <Header />
 
-      {/* Conditional rendering logic */}
       {isLoggedIn ? (
         <>
           <Research onSearch={handleSearch} />
@@ -117,22 +93,13 @@ function App() {
 
           {loading ? (
             <p>Loading jobs...</p>
+          ) : selectedJobId ? (
+            // Si un job est sélectionné, afficher les détails de l'annonce
+            <JobDetails jobId={selectedJobId} onBack={handleBack} />
           ) : searchResults.length === 0 ? (
             <p>No jobs found</p>
           ) : (
             <JobAdList jobs={searchResults} onLearnMore={handleLearnMore} />
-          )}
-
-          {isModalOpen && selectedJob && (
-            <div className="modal">
-              <div className="modal-content">
-                <h2>{selectedJob.title}</h2>
-                <p>{selectedJob.shortDescription}</p>
-                <p>Location: {selectedJob.location}</p>
-                <p>Salary: {selectedJob.salary}</p>
-                <button onClick={closeModal}>Close</button>
-              </div>
-            </div>
           )}
         </>
       ) : isRegistering ? (

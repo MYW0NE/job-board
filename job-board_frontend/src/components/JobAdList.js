@@ -1,32 +1,38 @@
-// src/components/JobAdList.js
-import React from 'react';
-import JobAd from './JobAd';
-import './JobAd.css'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import JobAd from './JobAd'; // Assurez-vous d'importer JobAd correctement
 
-const JobAdList = ({ jobs, onLearnMore, onApply }) => {
-    console.log("Jobs received:", jobs);
-    return (
-      <div className="job-ad-list">
-        {jobs.length > 0 ? (
-          jobs.map((job) => (
-            <JobAd
-              key={job.id}
-              title={job.title}
-              shortDescription={job.shortDescription}
-              onLearnMore={() => onLearnMore(job.id)}
-              onApply={() => onApply(job.id)}
+const JobAdList = ({ onLearnMore }) => {
+  const [jobs, setJobs] = useState([]);
+
+  useEffect(() => {
+    // Fetch the job ads from the API
+    axios.get('http://localhost:5000/api/job-ads')
+      .then(response => {
+        setJobs(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching job ads:', error);
+      });
+  }, []);
+
+  return (
+    <div className="job-listings">
+      <h2>Job Listings</h2>
+      <div className="job-list">
+        {jobs.map((job) => (
+          <div key={job.ad_id} className="job-ad">
+            <JobAd 
+              title={job.title} 
+              shortDescription={job.description} 
+              onLearnMore={() => onLearnMore(job.ad_id)}
+              onApply={() => console.log(`Apply to job ${job.ad_id}`)}
             />
-          ))
-        ) : (
-          <p>La recherche emplois ouilygfliuglui ne donne aucun résultat. <br/><br/>
-          Suggestions de recherche : <br/><br/>
-          - Essayez des termes plus généraux <br/>
-          - Vérifiez l'orthographe <br/>
-          - Utilisez des mots entiers à la place d'abréviations
-          </p>
-        )}
+          </div>
+        ))}
       </div>
-    );
-  };  
+    </div>
+  );
+};
 
 export default JobAdList;
