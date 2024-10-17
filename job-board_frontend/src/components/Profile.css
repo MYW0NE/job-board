@@ -1,0 +1,75 @@
+/* src/components/Profile.css */
+
+/* Profile container styling */
+.profile {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #e3e3e3;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+  }
+  
+  h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #2d2d2d;
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    font-size: 14px;
+    color: #4a4a4a;
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  
+  .profile-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+  }
+  
+  .profile-info {
+    margin-top: 20px;
+  }
+  
+  .profile-info p {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .profile-info strong {
+    color: #5a5a5a;
+    font-weight: bold;
+  }
+  
+  /* Add some hover effect on the edit button */
+  button {
+    margin-top: 10px;
+    background-color: #f8f8f8;
+    color: #2d2d2d;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #ececec;
+    border-color: #ccc;
+  }
+  

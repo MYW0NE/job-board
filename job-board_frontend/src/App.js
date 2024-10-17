@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
-import Research from './components/research';  // Corrected the import to match file name casing
+import Research from './components/research'; 
 import JobAdList from './components/JobAdList';
-import JobDetails from './components/JobDetails'; // Importe JobDetails ici
+import JobDetails from './components/JobDetails';
 import Login from './components/Login';
 import Register from './components/Register';
 import ForgotPassword from './components/ForgotPassword'; 
+import Profile from './components/Profile';
 import axios from 'axios'; 
 import './App.css';   
 
@@ -13,16 +14,14 @@ function App() {
   const [jobs, setJobs] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedJobId, setSelectedJobId] = useState(null); // On change pour stocker l'ID du job
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedJobId, setSelectedJobId] = useState(null); 
   const [isLoggedIn, setIsLoggedIn] = useState(true); 
   const [isRegistering, setIsRegistering] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   // Fetch job ads from the API
   useEffect(() => {
-    // TODO: React appelle 2 fois useEffect() au load de la page
-    axios.get('http://127.0.0.1:5000/api/job-ads') 
+    axios.get('http://localhost:5000/api/job-ads') 
       .then(response => {
         setJobs(response.data); 
         setSearchResults(response.data); 
@@ -43,11 +42,11 @@ function App() {
   };
 
   const handleLearnMore = (jobId) => {
-    setSelectedJobId(jobId); // Stocke l'ID du job sélectionné
+    setSelectedJobId(jobId); 
   };
 
   const handleBack = () => {
-    setSelectedJobId(null); // Reset l'ID pour revenir à la liste des annonces
+    setSelectedJobId(null); 
   };
 
   const handleLogin = () => {
@@ -84,33 +83,33 @@ function App() {
 
   return (
     <div className="App">
-      <Header setIsLoggedIn={setIsLoggedIn}/>
+      <Header setIsLoggedIn={setIsLoggedIn} />
+      <Profile isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
 
-      {/* Conditional rendering logic for login, registration, forgot password, and job listings */}
       {isLoggedIn ? (
         <>
-          <Research onSearch={handleSearch} />
-          <div className="jobListings">
-            <h2>Offres d'emplois</h2>
-            {loading ? (
-              <p>Loading jobs...</p>
-            ) : searchResults.length === 0 ? (
-              <p>No jobs found</p>
-            ) : (
-              <JobAdList jobs={searchResults} onLearnMore={handleLearnMore} />
-            )}
-          </div>
+      <Research onSearch={handleSearch} />
+            <h2 className='page_title'>Offres d'emplois</h2>
+            <div className="container">
+            
+              <div className="jobListings">
+                {loading ? (
+                  <p>Loading jobs...</p>
+                ) : searchResults.length === 0 ? (
+                  <p>No jobs found</p>
+                ) : (
+                  <JobAdList jobs={searchResults} onLearnMore={handleLearnMore} />
+                )}
+              </div>
 
-          {loading ? (
-            <p>Loading jobs...</p>
-          ) : selectedJobId ? (
-            // Si un job est sélectionné, afficher les détails de l'annonce
-            <JobDetails jobId={selectedJobId} onBack={handleBack} />
-          ) : searchResults.length === 0 ? (
-            <p>No jobs found</p>
-          ) : (
-            <JobAdList jobs={searchResults} onLearnMore={handleLearnMore} />
-          )}
+              <div className="job-details">
+                {selectedJobId ? (
+                  <JobDetails jobId={selectedJobId} onBack={handleBack} />
+                ) : (
+                  <p>No job selected</p>
+                )}
+              </div>
+          </div>
         </>
       ) : isRegistering ? (
         <Register onRegister={handleRegister} onShowLogin={showLogin} />
