@@ -1,6 +1,6 @@
-// src/components/research.js
+// src/components/Research.js
 import React, { useState } from 'react';
-import './research.css'; // Ensure the CSS is linked
+import './Research.css'; // Ensure the CSS is linked
 
 function Research({ onSearch }) {
   const [searchQuery, setSearchQuery] = useState('');
