@@ -21,9 +21,9 @@ const Profile = ({ isLoggedIn }) => {
         params: { userId },  // Passe l'ID de l'utilisateur dans la requête
       })
       .then(response => {
-        console.log('User data fetched:', response.data);  // Log to check fetched data
+        console.log('User data fetched:', response.data);  // Vérifie les données récupérées
         setUserData(response.data);  // Remplit l'état avec les données récupérées
-        setLoading(false);  // Stoppe le chargement
+        setLoading(false);  // Arrête l'indicateur de chargement
       })
       .catch(error => {
         console.error('Erreur lors du chargement du profil :', error);
@@ -49,13 +49,14 @@ const Profile = ({ isLoggedIn }) => {
     e.preventDefault();
     setLoading(true);
     setSuccessMessage('');
-
     try {
       const response = await axios.put(`http://localhost:5000/api/user-profile`, {
         userId,
         ...userData, // Passe toutes les données mises à jour
       });
-      
+      setUserData(response.data); // Met à jour l'état avec les nouvelles données
+      setEditMode(false); // Quitte le mode d'édition
+      setError('');
       setSuccessMessage('Profil mis à jour avec succès !');
       
       // Re-fetch the updated user data from the server
@@ -76,7 +77,22 @@ const Profile = ({ isLoggedIn }) => {
     } finally {
       setLoading(false);
     }
-};
+  };
+
+  const handleDeleteUser = async () => {
+    const confirmDelete = window.confirm("Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.");
+    if (confirmDelete) {
+      try {
+        await axios.delete(`http://localhost:5000/api/delete-user/${userId}`);
+        setSuccessMessage('Votre compte a été supprimé avec succès.');
+        localStorage.removeItem('userId'); // Supprime l'userId du localStorage
+        // Effectuez ici des redirections ou des actions supplémentaires après la suppression.
+      } catch (error) {
+        console.error('Erreur lors de la suppression du compte :', error);
+        setError('Impossible de supprimer votre compte.');
+      }
+    }
+  };
 
   if (loading) {
     return <p>Chargement du profil...</p>;
@@ -146,6 +162,9 @@ const Profile = ({ isLoggedIn }) => {
           <p><strong>Mot de passe :</strong> {userData.password}</p> 
           <button onClick={() => setEditMode(true)}>
             Modifier le Profil
+          </button>
+          <button className="delete-button" onClick={handleDeleteUser}>
+            Supprimer mon compte
           </button>
         </div>
       )}
