@@ -19,10 +19,10 @@ function App() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
-  // Fetch job ads from the API
   useEffect(() => {
     axios.get('http://localhost:5000/api/job-ads') 
       .then(response => {
+        console.log(response.data); // Log the response data
         setJobs(response.data); 
         setSearchResults(response.data); 
         setLoading(false); 
@@ -33,12 +33,41 @@ function App() {
       });
   }, []);
 
-  const handleSearch = (searchQuery, locationQuery) => {
-    const filteredJobs = jobs.filter((job) =>
-      job.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      job.location.toLowerCase().includes(locationQuery.toLowerCase())
-    );
-    setSearchResults(filteredJobs);
+  const handleApplyClick = (job) => {
+    setSelectedJob(job); 
+    setShowApplyForm(true); 
+  };
+
+  const handleFormSubmit = async (formData) => {
+    try {
+      const response = await axios.post(`http://localhost:5000/api/apply/${selectedJob.ad_id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('Application submitted:', response.data);
+      setShowApplyForm(false); 
+      setSelectedJobId(null);
+    } catch (error) {
+      console.error('Error submitting application:', error);
+    }
+  };
+
+  // Updated handleSearch to call backend
+  const handleSearch = async (searchQuery, locationQuery) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/search`, {
+        params: {
+          title: searchQuery,
+          location: locationQuery
+        }
+      });
+      console.log('Search Results:', response.data); // Log the search results
+      setSearchResults(response.data);
+    } catch (error) {
+      console.error('Error searching for jobs:', error);
+      setSearchResults([]); // Reset search results on error
+    }
   };
 
   const handleLearnMore = (jobId) => {
@@ -111,18 +140,18 @@ function App() {
           </div>
         </>
       ) : isRegistering ? (
-        <Register onRegister={handleRegister} onShowLogin={showLogin} />
+        <Register onRegister={() => setIsLoggedIn(true)} onShowLogin={() => setIsRegistering(false)} />
       ) : isForgotPassword ? (
         <ForgotPassword 
-          onReset={resetToLogin} 
-          onLogin={showLogin} 
-          onRegister={showRegister} 
+          onReset={() => setIsForgotPassword(false)} 
+          onLogin={() => setIsForgotPassword(false)} 
+          onRegister={() => setIsRegistering(true)} 
         />
       ) : (
         <Login 
-          onLogin={handleLogin} 
-          onShowRegister={showRegister} 
-          onForgotPassword={showForgotPassword} 
+          onLogin={() => setIsLoggedIn(true)} 
+          onShowRegister={() => setIsRegistering(true)} 
+          onForgotPassword={() => setIsForgotPassword(true)} 
         />
       )}
     </div>

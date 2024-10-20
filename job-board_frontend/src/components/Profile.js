@@ -122,7 +122,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
             <input
               type="text"
               name="Nom"
-              value={userData.firstName}
+              value={userData.Nom}
               onChange={handleInputChange}
               required
               className="profile-input"
@@ -133,7 +133,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
             <input
               type="text"
               name="password"
-              value={userData.lastName}
+              value={userData.password}
               onChange={handleInputChange}
               required
               className="profile-input"
@@ -169,8 +169,8 @@ const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
         </form>
       ) : (
         <div className="profile-info">
-          <p><strong>Nom :</strong> {userData.firstName}</p>
-          <p><strong>Mot de passe :</strong> {userData.lastName}</p>
+          <p><strong>Nom :</strong> {userData.Nom}</p>
+          <p><strong>Mot de passe :</strong> {userData.password}</p>
           <p><strong>Email :</strong> {userData.email}</p>
           <p><strong>Téléphone :</strong> {userData.phone}</p>
           <button onClick={() => setEditMode(true)}>

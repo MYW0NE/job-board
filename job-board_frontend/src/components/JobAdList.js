@@ -9,8 +9,8 @@ const JobAdList = ({ onLearnMore, isLoggedIn }) => {
   const [selectedJobId, setSelectedJobId] = useState(null);
   const [showApplyForm, setShowApplyForm] = useState(false);
 
+  // Fetch the job ads from the API
   useEffect(() => {
-    // Fetch the job ads from the API
     axios.get('http://localhost:5000/api/job-ads')
       .then(response => {
         setJobs(response.data);

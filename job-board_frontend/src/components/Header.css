@@ -134,6 +134,7 @@
   padding: 8px 0; /* Add padding for better click area */
   display: flex; /* Use flex to align icons and text */
   align-items: center; /* Center items vertically */
+  cursor: pointer;
 }
 
 /* Icon margin */
@@ -177,10 +178,11 @@
 
 /* CTA button styles */
 .cta-button {
+  margin:0;
   background-color: #0073e6;
   color: #fff;
   border: none;
-  padding: 10px 15px;
+  
   border-radius: 5px;
   font-size: 1rem;
   cursor: pointer;
@@ -247,7 +249,7 @@
     flex-direction: column;
     position: absolute;
     background-color: white;
-    top: 60px;
+    top: 80px;
     left: 0;
     right: 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
