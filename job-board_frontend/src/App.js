@@ -154,7 +154,6 @@ function App() {
         />
       ) : (
         <>
-          <Research onSearch={handleSearch} />
           <h2 className='page_title'>Offres d'emplois</h2>
           <div className="container">
             <div className="jobListings">

@@ -2,8 +2,9 @@
 
 /* Profile container styling */
 .profile {
+    display: block;
     max-width: 600px;
-    margin: 0 auto;
+    margin: 50px auto;
     padding: 20px;
     background-color: #ffffff;
     border: 1px solid #e3e3e3;
