@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
-import Research from './components/research'; 
+import Research from './components/Research'; 
 import JobAdList from './components/JobAdList';
 import JobDetails from './components/JobDetails';
 import Login from './components/Login';
 import Register from './components/Register';
 import ForgotPassword from './components/ForgotPassword'; 
+import ApplyForm from './components/ApplyForm'; 
 import Profile from './components/Profile';
 import axios from 'axios'; 
 import './App.css';   
@@ -15,14 +16,17 @@ function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedJobId, setSelectedJobId] = useState(null); 
-  const [isLoggedIn, setIsLoggedIn] = useState(true); 
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null); 
+  const [showApplyForm, setShowApplyForm] = useState(false); 
+  const [showLoginForm, setShowLoginForm] = useState(false);  
+  const [showRegisterForm, setShowRegisterForm] = useState(false);
+  const [showForgotPasswordForm, setShowForgotPasswordForm] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Keep track of login state
+  const [showProfile, setShowProfile] = useState(false); // NEW: Track profile visibility
 
   useEffect(() => {
     axios.get('http://localhost:5000/api/job-ads') 
       .then(response => {
-        console.log(response.data); // Log the response data
         setJobs(response.data); 
         setSearchResults(response.data); 
         setLoading(false); 
@@ -40,20 +44,18 @@ function App() {
 
   const handleFormSubmit = async (formData) => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/apply/${selectedJob.ad_id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      const response = await axios.post(`http://localhost:5000/api/apply`, {
+        ad_id: selectedJob.ad_id, 
+        ...formData,
       });
-      console.log('Application submitted:', response.data);
       setShowApplyForm(false); 
       setSelectedJobId(null);
+      setSelectedJob(null);
     } catch (error) {
       console.error('Error submitting application:', error);
     }
   };
 
-  // Updated handleSearch to call backend
   const handleSearch = async (searchQuery, locationQuery) => {
     try {
       const response = await axios.get(`http://localhost:5000/api/search`, {
@@ -62,97 +64,128 @@ function App() {
           location: locationQuery
         }
       });
-      console.log('Search Results:', response.data); // Log the search results
       setSearchResults(response.data);
     } catch (error) {
-      console.error('Error searching for jobs:', error);
-      setSearchResults([]); // Reset search results on error
+      setSearchResults([]); 
     }
   };
 
   const handleLearnMore = (jobId) => {
+    const selectedJob = searchResults.find(job => job.ad_id === jobId);
+    setSelectedJob(selectedJob);  
     setSelectedJobId(jobId); 
   };
 
   const handleBack = () => {
     setSelectedJobId(null); 
+    setShowApplyForm(false);  
+    setSelectedJob(null);     
   };
 
   const handleLogin = () => {
-    setIsLoggedIn(true);
-    setIsRegistering(false);
-    setIsForgotPassword(false);
+    setIsLoggedIn(true);  
+    setShowLoginForm(false);  
+    setShowRegisterForm(false);
+    setShowForgotPasswordForm(false);
   };
 
-  const handleRegister = () => {
-    setIsLoggedIn(true);
-    setIsRegistering(false);
-    setIsForgotPassword(false);
-  };
-
-  const showRegister = () => {
-    setIsRegistering(true);
-    setIsForgotPassword(false);
+  const handleLogout = () => {
+    setIsLoggedIn(false);  
   };
 
   const showLogin = () => {
-    setIsRegistering(false);
-    setIsForgotPassword(false);
+    setShowLoginForm(true); 
+    setShowRegisterForm(false);
+    setShowForgotPasswordForm(false);
+  };
+
+  const showRegister = () => {
+    setShowRegisterForm(true);
+    setShowLoginForm(false);
+    setShowForgotPasswordForm(false);
   };
 
   const showForgotPassword = () => {
-    setIsForgotPassword(true);
-    setIsRegistering(false);
+    setShowForgotPasswordForm(true);
+    setShowLoginForm(false);
+    setShowRegisterForm(false);
   };
 
-  const resetToLogin = () => {
-    setIsForgotPassword(false);
-    setIsRegistering(false);
+  // NEW: Function to handle showing the profile page
+  const handleShowProfile = () => {
+    setShowProfile(true); // Show the profile page when clicking on "Profil"
+  };
+
+  const handleBackFromProfile = () => {
+    setShowProfile(false); // Hide the profile page and go back to the main content
+  };
+
+  // NEW: Handle home click to hide login and other forms
+  const handleHomeClick = () => {
+    setShowLoginForm(false);
+    setShowProfile(false);
+    setShowRegisterForm(false);
+    setShowForgotPasswordForm(false);
   };
 
   return (
     <div className="App">
-      <Header setIsLoggedIn={setIsLoggedIn} />
+      <Header 
+        setShowLoginForm={setShowLoginForm} 
+        isLoggedIn={isLoggedIn} 
+        setIsLoggedIn={setIsLoggedIn} 
+        onLoginClick={showLogin} 
+        onLogout={handleLogout} 
+        onProfileClick={handleShowProfile} // NEW: Pass the profile click handler
+        onHomeClick={handleHomeClick} // NEW: Pass the home click handler
+      />  
 
-      {isLoggedIn ? (
-        <>
-      <Research onSearch={handleSearch} />
-            <h2 className='page_title'>Offres d'emplois</h2>
-            <div className="container">
-            
-              <div className="jobListings">
-                {loading ? (
-                  <p>Loading jobs...</p>
-                ) : searchResults.length === 0 ? (
-                  <p>No jobs found</p>
-                ) : (
-                  <JobAdList jobs={searchResults} onLearnMore={handleLearnMore} />
-                )}
-              </div>
-
-              <div className="job-details">
-                {selectedJobId ? (
-                  <JobDetails jobId={selectedJobId} onBack={handleBack} />
-                ) : (
-                  <p>No job selected</p>
-                )}
-              </div>
-          </div>
-        </>
-      ) : isRegistering ? (
-        <Register onRegister={() => setIsLoggedIn(true)} onShowLogin={() => setIsRegistering(false)} />
-      ) : isForgotPassword ? (
+      {showProfile ? ( // NEW: Render Profile component if showProfile is true
+        <Profile isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} onBack={handleBackFromProfile} />
+      ) : showLoginForm ? (
+        <Login onLogin={handleLogin} onShowRegister={showRegister} onForgotPassword={showForgotPassword} />
+      ) : showRegisterForm ? (
+        <Register onRegister={handleLogin} onShowLogin={showLogin} />
+      ) : showForgotPasswordForm ? (
         <ForgotPassword 
-          onReset={() => setIsForgotPassword(false)} 
-          onLogin={() => setIsForgotPassword(false)} 
-          onRegister={() => setIsRegistering(true)} 
+          onReset={() => setShowForgotPasswordForm(false)} 
+          onLogin={showLogin} 
+          onRegister={showRegister} 
         />
       ) : (
-        <Login 
-          onLogin={() => setIsLoggedIn(true)} 
-          onShowRegister={() => setIsRegistering(true)} 
-          onForgotPassword={() => setIsForgotPassword(true)} 
-        />
+        <>
+          <Research onSearch={handleSearch} />
+          <h2 className='page_title'>Offres d'emplois</h2>
+          <div className="container">
+            <div className="jobListings">
+              {loading ? (
+                <p>Loading jobs...</p>
+              ) : searchResults.length === 0 ? (
+                <p>No jobs found</p>
+              ) : (
+                <JobAdList jobs={searchResults} onLearnMore={handleLearnMore} onApply={handleApplyClick} />
+              )}
+            </div>
+            <div className="job-details">
+              {showApplyForm && selectedJob ? (
+                <ApplyForm
+                  jobId={selectedJob.ad_id}  
+                  onSubmit={handleFormSubmit}
+                  onClose={handleBack}       
+                  isLoggedIn={isLoggedIn} 
+                />
+              ) : selectedJobId ? (
+                <JobDetails
+                  jobId={selectedJobId}
+                  onBack={handleBack}
+                  onApply={() => handleApplyClick(selectedJob)}  
+                />
+              ) : (
+                <p>No job selected</p>
+              )}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import './Login.css'; // Import the CSS file for styling
-import axios from 'axios'; // Import axios to send requests to the backend
+import './Login.css'; 
+import axios from 'axios'; 
 
 const Login = ({ onLogin, onShowRegister, onForgotPassword }) => {
   const [email, setEmail] = useState('');
@@ -10,27 +10,28 @@ const Login = ({ onLogin, onShowRegister, onForgotPassword }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const LoginData = {
-      email,
-      password
-    };
+    const LoginData = { email, password };
+    
     axios.post('http://127.0.0.1:5000/api/login', LoginData)
     .then(response => {
+      const { userId } = response.data; // Récupère userId de la réponse
       console.log('Login successful:', response.data);
+
+      // Stocker l'ID utilisateur dans localStorage pour l'utiliser plus tard
+      localStorage.setItem('userId', userId);
+      
+      // Appeler la fonction onLogin pour mettre à jour l'état de l'application
       onLogin();
     })
     .catch(error => {
-      // Gestion des erreurs
       console.error('Error logging in:', error);
       if (error.response && error.response.data && error.response.data.error) {
-        // Afficher l'erreur renvoyée par le backend
         setError(error.response.data.error);
       } else {
-        // Si aucune erreur spécifique n'est renvoyée, afficher un message par défaut
         setError('Une erreur est survenue lors de la connexion. Veuillez réessayer.');
       }
     });
-};
+  };
 
   return (
     <div className="login-container">
@@ -58,12 +59,10 @@ const Login = ({ onLogin, onShowRegister, onForgotPassword }) => {
           </div>
           <button type="submit" className="button_profil">Connexion</button>
 
-          {/* Link to switch to Register page */}
           <p className="register-link" onClick={onShowRegister}>
             Pas de compte ? S'inscrire
           </p>
 
-          {/* Link for Forgot Password */}
           <p className="forgot-password" onClick={onForgotPassword}>
             Mot de passe oublié ?
           </p>

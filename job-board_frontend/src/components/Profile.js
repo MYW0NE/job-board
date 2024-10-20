@@ -1,139 +1,100 @@
-// src/components/Profile.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Login from './Login';
-import Register from './Register';
-import ForgotPassword from './ForgotPassword';
 import './Profile.css'; // Import the new CSS styles for the Profile component
 
-const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
+const Profile = ({ isLoggedIn }) => {
   const [userData, setUserData] = useState({
-    Nom: '',
-    password: '',
+    name: '',
     email: '',
     phone: '',
+    password: '',
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [error, setError] = useState('');
-
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const userId = localStorage.getItem('userId'); // Récupère l'ID utilisateur depuis localStorage
 
   useEffect(() => {
-    if (isLoggedIn) {
-      axios.get('http://localhost:5000/api/user-profile')
-        .then(response => {
-          setUserData(response.data);
-        })
-        .catch(error => {
-          console.error('Erreur lors du chargement du profil :', error);
-        });
+    if (isLoggedIn && userId) {
+      axios.get(`http://localhost:5000/api/user-profile`, {
+        params: { userId },  // Passe l'ID de l'utilisateur dans la requête
+      })
+      .then(response => {
+        console.log('User data fetched:', response.data);  // Log to check fetched data
+        setUserData(response.data);  // Remplit l'état avec les données récupérées
+        setLoading(false);  // Stoppe le chargement
+      })
+      .catch(error => {
+        console.error('Erreur lors du chargement du profil :', error);
+        setError('Impossible de charger le profil');
+        setLoading(false);
+      });
+    } else {
+      setError('ID utilisateur manquant ou utilisateur non connecté');
+      setLoading(false);
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, userId]);
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserData(prevData => ({
       ...prevData,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setSuccessMessage('');
+
     try {
-      const response = await axios.put('http://localhost:5000/api/user-profile', userData);
-      setUserData(response.data);
-      setEditMode(false);
-      setError('');
-      console.log('Profil mis à jour avec succès');
+      const response = await axios.put(`http://localhost:5000/api/user-profile`, {
+        userId,
+        ...userData, // Passe toutes les données mises à jour
+      });
+      
+      setSuccessMessage('Profil mis à jour avec succès !');
+      
+      // Re-fetch the updated user data from the server
+      axios.get(`http://localhost:5000/api/user-profile`, {
+        params: { userId },  // Passe l'ID de l'utilisateur dans la requête
+      })
+      .then(response => {
+        setUserData(response.data);  // Update the state with new data
+        setEditMode(false); // Exit edit mode
+      })
+      .catch(error => {
+        console.error('Erreur lors du chargement des nouvelles données :', error);
+      });
+
     } catch (error) {
       console.error('Erreur lors de la mise à jour du profil :', error);
       setError('Impossible de mettre à jour le profil');
     } finally {
       setLoading(false);
     }
-  };
+};
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    setIsRegistering(false);
-    setIsForgotPassword(false);
-  };
-
-  const handleRegister = () => {
-    setIsLoggedIn(true);
-    setIsRegistering(false);
-    setIsForgotPassword(false);
-  };
-
-  const showRegister = () => {
-    setIsRegistering(true);
-    setIsForgotPassword(false);
-  };
-
-  const showLogin = () => {
-    setIsRegistering(false);
-    setIsForgotPassword(false);
-  };
-
-  const showForgotPassword = () => {
-    setIsForgotPassword(true);
-    setIsRegistering(false);
-  };
-
-  const resetToLogin = () => {
-    setIsForgotPassword(false);
-    setIsRegistering(false);
-  };
-
-  if (!isLoggedIn) {
-    return (
-      <div>
-        {isRegistering ? (
-          <Register onRegister={handleRegister} onShowLogin={showLogin} />
-        ) : isForgotPassword ? (
-          <ForgotPassword 
-            onReset={resetToLogin} 
-            onLogin={showLogin} 
-            onRegister={showRegister} 
-          />
-        ) : (
-          <Login 
-            onLogin={handleLogin} 
-            onShowRegister={showRegister} 
-            onForgotPassword={showForgotPassword} 
-          />
-        )}
-      </div>
-    );
+  if (loading) {
+    return <p>Chargement du profil...</p>;
   }
 
   return (
     <div className="profile">
       <h2>Votre Profil</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
       {editMode ? (
         <form onSubmit={handleFormSubmit}>
           <div className="form-group">
             <label>Nom :</label>
             <input
               type="text"
-              name="Nom"
-              value={userData.Nom}
-              onChange={handleInputChange}
-              required
-              className="profile-input"
-            />
-          </div>
-          <div className="form-group">
-            <label>Mot de passe:</label>
-            <input
-              type="text"
-              name="password"
-              value={userData.password}
+              name="name"
+              value={userData.name}
               onChange={handleInputChange}
               required
               className="profile-input"
@@ -160,6 +121,16 @@ const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
               className="profile-input"
             />
           </div>
+          <div className="form-group">
+            <label>Mot de passe :</label>
+            <input
+              type="password"
+              name="password"
+              value={userData.password}
+              onChange={handleInputChange}
+              className="profile-input"
+            />
+          </div>
           <button type="submit" disabled={loading}>
             {loading ? 'Enregistrement...' : 'Sauvegarder les modifications'}
           </button>
@@ -169,10 +140,10 @@ const Profile = ({ isLoggedIn, setIsLoggedIn }) => {
         </form>
       ) : (
         <div className="profile-info">
-          <p><strong>Nom :</strong> {userData.Nom}</p>
-          <p><strong>Mot de passe :</strong> {userData.password}</p>
+          <p><strong>Nom :</strong> {userData.name}</p>
           <p><strong>Email :</strong> {userData.email}</p>
           <p><strong>Téléphone :</strong> {userData.phone}</p>
+          <p><strong>Mot de passe :</strong> {userData.password}</p> 
           <button onClick={() => setEditMode(true)}>
             Modifier le Profil
           </button>

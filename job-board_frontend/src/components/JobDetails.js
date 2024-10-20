@@ -34,7 +34,7 @@ const JobDetails = ({ jobId, onApply }) => {
       <p><strong>Company Name:</strong> {jobDetails.company_name || 'N/A'}</p>
       <p><strong>Industry:</strong> {jobDetails.industry || 'N/A'}</p>
       <p><strong>Company Description:</strong> {jobDetails.bigdescription || 'N/A'}</p>
-      <button onClick={onBack}>Postuler</button>
+      <button onClick={onApply}>Postuler</button>
     </div>
   );
 };
