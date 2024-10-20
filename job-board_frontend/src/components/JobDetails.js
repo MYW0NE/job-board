@@ -28,7 +28,7 @@ const JobDetails = ({ jobId, onBack }) => {
       <p><strong>Company Name:</strong> {jobDetails.company_name || 'N/A'}</p>
       <p><strong>Industry:</strong> {jobDetails.industry || 'N/A'}</p>
       <p><strong>Company Description:</strong> {jobDetails.bigdescription || 'N/A'}</p>
-      <button onClick={onBack}>Back to Listings</button>
+      <button onClick={onBack}>Postuler</button>
     </div>
   );
 };

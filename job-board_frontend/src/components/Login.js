@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Login.css'; // Import the CSS file for styling
+import axios from 'axios'; // Import axios to send requests to the backend
 
 const Login = ({ onLogin, onShowRegister, onForgotPassword }) => {
   const [email, setEmail] = useState('');
@@ -8,15 +9,28 @@ const Login = ({ onLogin, onShowRegister, onForgotPassword }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Email:', email);
-    // Mockup for demo purposes; replace with actual login logic
-    if (email === 'test@example.com' && password === 'password') {
-      onLogin(); // Call this function on successful login
-    } else {
-      setError('Invalid email or password');
-    }
-  };
+
+    const LoginData = {
+      email,
+      password
+    };
+    axios.post('http://127.0.0.1:5000/api/login', LoginData)
+    .then(response => {
+      console.log('Login successful:', response.data);
+      onLogin();
+    })
+    .catch(error => {
+      // Gestion des erreurs
+      console.error('Error logging in:', error);
+      if (error.response && error.response.data && error.response.data.error) {
+        // Afficher l'erreur renvoyée par le backend
+        setError(error.response.data.error);
+      } else {
+        // Si aucune erreur spécifique n'est renvoyée, afficher un message par défaut
+        setError('Une erreur est survenue lors de la connexion. Veuillez réessayer.');
+      }
+    });
+};
 
   return (
     <div className="login-container">

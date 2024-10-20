@@ -1,35 +1,38 @@
 import React, { useState } from 'react';
 import './Register.css'; // Import the CSS file for styling
+import axios from 'axios';
 import { FaPhone } from 'react-icons/fa';
 
 const Register = ({ onRegister, onShowLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phone, setPhoneNumber] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      setError("Les mots de passe ne correspondent pas !");
-      return;
-    }
+
 
     // Handle registration logic here
-    console.log('Registered with:', {
-      email,
+    const refistrationData = {
       name,
-      lastName,
-      phoneNumber,
+      email,
+      phone,
       password,
-    });
-    
-    // Call this function on successful registration
-    onRegister(); 
+      role: 'client',
+    };
+    //Requéte POST pour enregistrer l'utilisateur
+    axios.post('http://127.0.01:5000/api/register', refistrationData)
+      .then(response => {
+        console.log('Inscription réussie:', response.data);
+        onRegister();
+      })
+      .catch(error => {
+        console.error('Error registering:', error);
+        setError('Erreur lors de l\'enregistrement');
+      }); 
   };
 
   return (
@@ -42,20 +45,9 @@ const Register = ({ onRegister, onShowLogin }) => {
           <div className="input-group">
             <input
               type="text"
-              placeholder="Prénom"
+              placeholder="Nom"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-
-          {/* Last Name Input */}
-          <div className="input-group">
-            <input
-              type="text"
-              placeholder="Nom de famille"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
               required
             />
           </div>
@@ -65,7 +57,7 @@ const Register = ({ onRegister, onShowLogin }) => {
             <input
               type="tel"
               placeholder="Numéro de téléphone"
-              value={phoneNumber}
+              value={phone}
               onChange={(e) => setPhoneNumber(e.target.value)}
               required
             />
@@ -93,17 +85,6 @@ const Register = ({ onRegister, onShowLogin }) => {
             />
           </div>
 
-          {/* Confirm Password Input */}
-          <div className="input-group">
-            <input
-              type="password"
-              placeholder="Confirmer le mot de passe"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </div>
-
           {/* Submit Button */}
           <button type="submit" className="button_profil">S'inscrire</button>
 
@@ -116,5 +97,4 @@ const Register = ({ onRegister, onShowLogin }) => {
     </div>
   );
 };
-
 export default Register;
